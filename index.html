@@ -2,690 +2,675 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Kharcha</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-  background:#f7f6f2;
-  color:#1a1a18;
+
+/* NO dark mode — always light, mobile safe */
+html,body{
+  background:#f5f4f0 !important;
+  color:#1a1a18 !important;
+  font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   min-height:100vh;
+  -webkit-text-size-adjust:100%;
+}
+
+input,select,textarea,button{
+  font-family:inherit;
+  -webkit-appearance:none;
+  appearance:none;
 }
 input,select,textarea{
-  background:#ffffff;
-  color:#1a1a18;
-  border:1px solid #cccbc4;
-  border-radius:8px;
-  font-family:inherit;
-  font-size:14px;
-  padding:9px 12px;
+  background:#fff !important;
+  color:#1a1a18 !important;
+  border:1.5px solid #d4d3cc;
+  border-radius:9px;
+  font-size:15px;
+  padding:10px 13px;
   outline:none;
   width:100%;
   transition:border-color .15s;
 }
-input:focus,select:focus,textarea:focus{border-color:#888780;}
-textarea{resize:none;font-size:13px;line-height:1.4;}
+input:focus,select:focus,textarea:focus{border-color:#888;}
+textarea{resize:none;line-height:1.45;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
 
 .btn{
-  background:#1a1a18;color:#ffffff;border:none;
-  border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;
-  padding:10px 20px;cursor:pointer;transition:opacity .15s;white-space:nowrap;
-}
-.btn:hover{opacity:.82;}
-.btn-ghost{
-  background:#ffffff;color:#6b6b66;border:1px solid #cccbc4;
-  border-radius:8px;font-family:inherit;font-size:13px;
-  padding:7px 12px;cursor:pointer;transition:all .15s;white-space:nowrap;
-}
-.btn-ghost:hover{background:#f0efe9;color:#1a1a18;}
-
-/* ── LOGIN ── */
-#login-screen{
-  display:flex;align-items:center;justify-content:center;
-  min-height:100vh;padding:24px;background:#f7f6f2;
-}
-.login-box{width:320px;max-width:100%;}
-.logo{font-size:28px;font-weight:700;margin-bottom:4px;letter-spacing:-.5px;color:#1a1a18;}
-.logo-sub{font-size:13px;color:#6b6b66;margin-bottom:32px;}
-
-.pin-dots{display:flex;gap:14px;justify-content:center;margin:16px 0 8px;}
-.pin-dot{
-  width:16px;height:16px;border-radius:50%;
-  border:2px solid #cccbc4;background:#ffffff;
-  transition:all .2s;
-}
-.pin-dot.filled{background:#1a1a18;border-color:#1a1a18;}
-.pin-err{font-size:13px;color:#c0392b;text-align:center;min-height:22px;margin:4px 0 12px;}
-
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-.pin-key{
-  background:#ffffff;color:#1a1a18;
-  border:1px solid #e0dfd8;border-radius:10px;
-  font-family:inherit;font-size:22px;font-weight:500;
-  padding:18px 0;cursor:pointer;transition:all .15s;text-align:center;
+  background:#1a1a18;color:#fff;border:none;border-radius:9px;
+  font-size:15px;font-weight:600;padding:11px 22px;
+  cursor:pointer;transition:opacity .15s;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-.pin-key:hover{background:#f0efe9;}
-.pin-key:active{background:#e0dfd8;transform:scale(.96);}
-
-.setup-info{
-  background:#e8f4fd;border:1px solid #b5d4f4;border-radius:8px;
-  padding:12px 14px;font-size:12px;color:#0C447C;line-height:1.6;margin-bottom:16px;
+.btn:active{opacity:.7;}
+.btn-ghost{
+  background:#fff;color:#555;border:1.5px solid #d4d3cc;border-radius:9px;
+  font-size:13px;padding:8px 13px;cursor:pointer;transition:all .15s;
+  white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
-.setup-info b{font-weight:600;}
+.btn-ghost:active{background:#f0efe9;}
 
-/* ── APP ── */
-#app-screen{display:none;padding:20px 16px 40px;max-width:720px;margin:0 auto;}
-.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:8px;flex-wrap:wrap;}
+/* ─── LOGIN ─── */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;background:#f5f4f0 !important;
+}
+.lbox{width:300px;max-width:100%;}
+.llogo{font-size:26px;font-weight:700;color:#1a1a18;margin-bottom:3px;}
+.lsub{font-size:13px;color:#888;margin-bottom:28px;}
+
+.pin-label{font-size:13px;font-weight:600;color:#1a1a18;text-align:center;margin-bottom:8px;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:6px;}
+.pd{width:15px;height:15px;border-radius:50%;border:2px solid #ccc;background:#fff;transition:all .18s;}
+.pd.on{background:#1a1a18;border-color:#1a1a18;}
+.perr{font-size:13px;color:#d0322e;text-align:center;min-height:20px;margin:6px 0 10px;}
+
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pk{
+  background:#fff;color:#1a1a18;border:1.5px solid #e0dfd8;border-radius:12px;
+  font-size:22px;font-weight:500;padding:17px 0;cursor:pointer;
+  text-align:center;transition:background .1s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;
+}
+.pk:active{background:#e8e7e0;}
+
+/* ─── APP ─── */
+#app-screen{display:none;max-width:700px;margin:0 auto;padding:20px 15px 50px;}
+
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap;}
+.appname{font-size:20px;font-weight:700;color:#1a1a18;}
+.appsub{font-size:12px;color:#888;margin-top:1px;}
+.topbtns{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+
 .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px;}
-.mc{background:#f0efe9;border-radius:8px;padding:12px 14px;}
-.mc-label{font-size:11px;color:#6b6b66;margin-bottom:3px;}
-.mc-val{font-size:18px;font-weight:700;color:#1a1a18;}
+.mc{background:#fff;border:1.5px solid #e8e7e0;border-radius:10px;padding:12px 13px;}
+.mc-l{font-size:11px;color:#888;margin-bottom:3px;}
+.mc-v{font-size:17px;font-weight:700;color:#1a1a18;}
 
-.add-form{background:#f0efe9;border-radius:12px;padding:14px;margin-bottom:14px;border:1px solid #e0dfd8;}
-.form-r{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
-.form-r2{display:flex;gap:8px;align-items:flex-start;}
+.addform{background:#fff;border:1.5px solid #e8e7e0;border-radius:13px;padding:14px;margin-bottom:14px;}
+.frow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.frow2{display:flex;gap:8px;align-items:flex-start;}
 
-.pay-toggle{display:flex;border:1px solid #cccbc4;border-radius:8px;overflow:hidden;}
-.pay-opt{flex:1;text-align:center;padding:8px 4px;font-size:13px;cursor:pointer;color:#6b6b66;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
-.pay-opt.on{background:#1a1a18;color:#ffffff;font-weight:600;}
+.ptog{display:flex;border:1.5px solid #d4d3cc;border-radius:9px;overflow:hidden;}
+.popt{flex:1;text-align:center;padding:8px 4px;font-size:13px;cursor:pointer;color:#888;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;transition:all .15s;}
+.popt.on{background:#1a1a18;color:#fff;font-weight:600;}
 
-.tab{padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid transparent;color:#6b6b66;transition:all .15s;-webkit-tap-highlight-color:transparent;}
-.tab.on{background:#f0efe9;border-color:#cccbc4;color:#1a1a18;font-weight:600;}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;}
+.tab{padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;
+  border:1.5px solid transparent;color:#888;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.tab.on{background:#fff;border-color:#d4d3cc;color:#1a1a18;font-weight:600;}
 
-.tag-pill{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;white-space:nowrap;}
-.del-btn{background:none;border:none;cursor:pointer;color:#9e9e99;font-size:13px;padding:3px 6px;border-radius:4px;}
-.del-btn:hover{color:#c0392b;}
+.tag-pill{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;}
+.xbtn{background:none;border:none;cursor:pointer;color:#bbb;font-size:13px;padding:2px 5px;border-radius:4px;-webkit-tap-highlight-color:transparent;}
+.xbtn:active{color:#d0322e;}
 
-.exp-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.07);animation:si .2s ease;}
-@keyframes si{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.erow{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #eeede8;animation:si .2s ease;}
+@keyframes si{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
 
-.swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s;flex-shrink:0;}
+.swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;flex-shrink:0;transition:border-color .15s;-webkit-tap-highlight-color:transparent;}
 .swatch.on{border-color:#1a1a18;}
 
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:200;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:300;padding:16px;}
 .modal-bg.open{display:flex;}
-.modal{background:#ffffff;border:1px solid #e0dfd8;border-radius:12px;padding:22px;width:360px;max-width:94vw;max-height:90vh;overflow-y:auto;}
+.modal{background:#fff;border-radius:13px;padding:22px;width:340px;max-width:100%;max-height:85vh;overflow-y:auto;}
 
-.chart-wrap{position:relative;width:100%;height:260px;margin-bottom:12px;}
-.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.sync-notice{font-size:11px;padding:8px 12px;border-radius:8px;margin-top:10px;line-height:1.5;}
+.cw{position:relative;width:100%;height:250px;margin-bottom:12px;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 
-/* Setup steps */
-.step-badge{
-  display:inline-block;background:#1a1a18;color:#ffffff;
-  border-radius:99px;font-size:11px;font-weight:600;
-  width:20px;height:20px;line-height:20px;text-align:center;margin-right:6px;
-}
+.info-box{background:#edf4ff;border:1.5px solid #b8d4f8;border-radius:10px;padding:12px 14px;font-size:12px;color:#1a4a8a;line-height:1.65;margin-bottom:14px;}
+.info-box b{font-weight:600;}
+.step{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#1a4a8a;color:#fff;font-size:10px;font-weight:700;margin-right:5px;flex-shrink:0;}
 
-@media(max-width:480px){
+#sync-msg{font-size:11px;color:#888;}
+.saved{color:#1D9E75 !important;}
+.errclr{color:#d0322e !important;}
+
+@media(max-width:460px){
   .metrics{grid-template-columns:repeat(2,1fr);}
-  .topbar .btn-ghost{font-size:11px;padding:5px 8px;}
+  .frow{gap:6px;}
+  input,select{font-size:14px;padding:9px 11px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- ═══ LOGIN ═══ -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="logo">💸 Kharcha</div>
-    <div class="logo-sub">Personal expense tracker</div>
+<div class="lbox">
+  <div class="llogo">💸 Kharcha</div>
+  <div class="lsub">Personal expense tracker</div>
 
-    <!-- First time setup info -->
-    <div id="gist-setup" style="display:none;">
-      <div class="setup-info">
-        <b>Pehli baar setup — 2 minute ka kaam:</b><br><br>
-        <span class="step-badge">1</span> <b>gist.github.com</b> pe jao<br>
-        <span class="step-badge">2</span> Filename: <b>kharcha.json</b><br>
-        Content: <code style="background:#d0e8f8;padding:1px 4px;border-radius:3px;">{"expenses":[],"tags":[]}</code><br>
-        <span class="step-badge">3</span> <b>Create secret gist</b> dabao<br>
-        <span class="step-badge">4</span> Settings → Developer settings → Personal access tokens → <b>Generate new token (classic)</b>, scope: <b>gist</b> tick karo<br>
-        <span class="step-badge">5</span> Neeche wale boxes mein Gist ID aur Token paste karo<br><br>
-        <b>Yeh sirf ek baar karna hai — sab devices pe same data dikhega!</b>
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="font-size:12px;font-weight:600;color:#1a1a18;display:block;margin-bottom:4px;">Gist ID</label>
-        <input id="inp-gist-id" type="text" placeholder="e.g. a1b2c3d4e5f6..." style="margin-bottom:8px;"/>
-        <label style="font-size:12px;font-weight:600;color:#1a1a18;display:block;margin-bottom:4px;">GitHub Token (gist scope)</label>
-        <input id="inp-gh-token" type="password" placeholder="ghp_xxxxxxxxxxxx"/>
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="font-size:12px;font-weight:600;color:#1a1a18;display:block;margin-bottom:4px;">Apna PIN set karo (4 digit)</label>
-        <div class="pin-dots" id="setup-dots">
-          <div class="pin-dot"></div><div class="pin-dot"></div>
-          <div class="pin-dot"></div><div class="pin-dot"></div>
-        </div>
-      </div>
-      <div class="pin-err" id="setup-err"></div>
+  <!-- FIRST TIME SETUP -->
+  <div id="section-setup" style="display:none;">
+    <div class="info-box">
+      <b>Pehli baar setup</b><br><br>
+      Cross-device sync ke liye GitHub Gist use hoga.<br><br>
+      <span class="step">1</span><a href="https://gist.github.com" target="_blank" style="color:#1a4a8a;font-weight:600;">gist.github.com</a> pe jao → filename <b>kharcha.json</b>, content <b>{}</b> → <b>Create secret gist</b><br><br>
+      <span class="step">2</span>URL se ID copy karo:<br>
+      <code style="background:#d6e8ff;padding:2px 5px;border-radius:4px;font-size:11px;">gist.github.com/user/<b>← ye ID hai</b></code><br><br>
+      <span class="step">3</span><a href="https://github.com/settings/tokens/new" target="_blank" style="color:#1a4a8a;font-weight:600;">GitHub Token</a> banao → scope mein sirf <b>gist</b> tick karo → copy karo<br><br>
+      <span class="step">4</span>Neeche fill karo aur PIN set karo
     </div>
+    <div style="margin-bottom:9px;">
+      <div style="font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:4px;">Gist ID</div>
+      <input id="si-gist" type="text" placeholder="abc123def456..."/>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:4px;">GitHub Token</div>
+      <input id="si-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxx"/>
+    </div>
+    <div class="pin-label" id="setup-label">4-digit PIN banao</div>
+    <div class="pin-dots" id="setup-dots">
+      <div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    </div>
+    <div class="perr" id="setup-err"></div>
+    <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:10px;">PIN sirf is device mein save hoga — sab devices pe same PIN use karna hoga</div>
+  </div>
 
-    <!-- Normal login -->
-    <div id="normal-login" style="display:none;">
-      <div style="font-size:13px;color:#6b6b66;margin-bottom:4px;text-align:center;">Enter PIN to continue</div>
-      <div class="pin-dots" id="login-dots">
-        <div class="pin-dot"></div><div class="pin-dot"></div>
-        <div class="pin-dot"></div><div class="pin-dot"></div>
-      </div>
-      <div class="pin-err" id="login-err"></div>
+  <!-- NORMAL LOGIN -->
+  <div id="section-login" style="display:none;">
+    <div class="pin-label">PIN daalo</div>
+    <div class="pin-dots" id="login-dots">
+      <div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
     </div>
+    <div class="perr" id="login-err"></div>
+  </div>
 
-    <!-- PIN Pad -->
-    <div class="pin-pad" id="pin-pad">
-      <button class="pin-key" onclick="pk('1')">1</button>
-      <button class="pin-key" onclick="pk('2')">2</button>
-      <button class="pin-key" onclick="pk('3')">3</button>
-      <button class="pin-key" onclick="pk('4')">4</button>
-      <button class="pin-key" onclick="pk('5')">5</button>
-      <button class="pin-key" onclick="pk('6')">6</button>
-      <button class="pin-key" onclick="pk('7')">7</button>
-      <button class="pin-key" onclick="pk('8')">8</button>
-      <button class="pin-key" onclick="pk('9')">9</button>
-      <button class="pin-key" onclick="pk('back')" style="font-size:16px;">⌫</button>
-      <button class="pin-key" onclick="pk('0')">0</button>
-      <button class="pin-key" onclick="pk('clear')" style="font-size:13px;">CLR</button>
-    </div>
+  <!-- PIN PAD — always visible -->
+  <div class="pinpad">
+    <button class="pk" onclick="pk('1')">1</button>
+    <button class="pk" onclick="pk('2')">2</button>
+    <button class="pk" onclick="pk('3')">3</button>
+    <button class="pk" onclick="pk('4')">4</button>
+    <button class="pk" onclick="pk('5')">5</button>
+    <button class="pk" onclick="pk('6')">6</button>
+    <button class="pk" onclick="pk('7')">7</button>
+    <button class="pk" onclick="pk('8')">8</button>
+    <button class="pk" onclick="pk('9')">9</button>
+    <button class="pk" onclick="pk('back')" style="font-size:17px;">⌫</button>
+    <button class="pk" onclick="pk('0')">0</button>
+    <button class="pk" onclick="pk('clear')" style="font-size:12px;">CLR</button>
+  </div>
 
-    <div style="text-align:center;">
-      <button class="btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="resetAll()">Reset / change setup</button>
-    </div>
+  <div style="text-align:center;">
+    <button class="btn-ghost" style="font-size:11px;padding:5px 12px;" onclick="doReset()">Reset sab kuch</button>
   </div>
 </div>
+</div>
 
-<!-- ══ APP ══ -->
+<!-- ═══ APP ═══ -->
 <div id="app-screen">
 
   <div class="topbar">
     <div>
-      <div style="font-size:20px;font-weight:700;letter-spacing:-.3px;">💸 Kharcha</div>
-      <div style="font-size:12px;color:#6b6b66;" id="month-label"></div>
+      <div class="appname">💸 Kharcha</div>
+      <div class="appsub" id="month-label"></div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-      <span id="sync-status" style="font-size:11px;color:#9e9e99;"></span>
-      <button class="btn-ghost" style="font-size:12px;padding:5px 9px;" onclick="syncNow(false)">⟳ Sync</button>
-      <button class="btn-ghost" style="font-size:12px;padding:5px 9px;" onclick="exportCSV()">↓ CSV</button>
-      <button class="btn-ghost" style="font-size:12px;padding:5px 9px;" onclick="lockApp()">🔒</button>
+    <div class="topbtns">
+      <span id="sync-msg"></span>
+      <button class="btn-ghost" onclick="doSync()" style="font-size:12px;padding:6px 10px;">⟳ Sync</button>
+      <button class="btn-ghost" onclick="exportCSV()" style="font-size:12px;padding:6px 10px;">↓ CSV</button>
+      <button class="btn-ghost" onclick="doLock()" style="font-size:12px;padding:6px 10px;">🔒</button>
     </div>
   </div>
 
   <div class="metrics">
-    <div class="mc"><div class="mc-label">Total</div><div class="mc-val" id="m-total">₹0</div></div>
-    <div class="mc"><div class="mc-label">Cash</div><div class="mc-val" id="m-cash" style="color:#1D9E75;">₹0</div></div>
-    <div class="mc"><div class="mc-label">Online</div><div class="mc-val" id="m-online" style="color:#378ADD;">₹0</div></div>
-    <div class="mc"><div class="mc-label">Entries</div><div class="mc-val" id="m-count">0</div></div>
+    <div class="mc"><div class="mc-l">Total</div><div class="mc-v" id="m-total">₹0</div></div>
+    <div class="mc"><div class="mc-l">Cash</div><div class="mc-v" id="m-cash" style="color:#1D9E75;">₹0</div></div>
+    <div class="mc"><div class="mc-l">Online</div><div class="mc-v" id="m-online" style="color:#378ADD;">₹0</div></div>
+    <div class="mc"><div class="mc-l">Entries</div><div class="mc-v" id="m-count">0</div></div>
   </div>
 
-  <div class="add-form">
-    <div class="form-r">
-      <input id="inp-desc" type="text" placeholder="Kya kharch kiya?" style="flex:2;min-width:140px;"/>
-      <input id="inp-amt" type="number" placeholder="₹ Amount" style="width:110px;" min="0" step="1"/>
-      <select id="inp-tag" style="width:150px;"></select>
-      <button class="btn-ghost" onclick="openTagMgr()" style="padding:8px 10px;">⊕ Tag</button>
+  <div class="addform">
+    <div class="frow">
+      <input id="inp-desc" type="text" placeholder="Kya kharch kiya?" style="flex:2;min-width:130px;"/>
+      <input id="inp-amt"  type="number" placeholder="₹" style="width:100px;" min="0" step="1"/>
+      <select id="inp-tag" style="width:140px;"></select>
+      <button class="btn-ghost" onclick="openTM()" style="padding:9px 11px;">⊕ Tag</button>
     </div>
-    <div class="form-r2">
-      <textarea id="inp-note" placeholder="Note (optional)" rows="2" style="flex:1;"></textarea>
-      <div style="flex-shrink:0;min-width:130px;">
-        <div style="font-size:11px;color:#6b6b66;margin-bottom:5px;text-align:center;">Payment</div>
-        <div class="pay-toggle">
-          <div class="pay-opt on" data-v="cash"   onclick="setPay('cash')">Cash</div>
-          <div class="pay-opt"    data-v="both"   onclick="setPay('both')">Both</div>
-          <div class="pay-opt"    data-v="online" onclick="setPay('online')">Online</div>
+    <div class="frow2">
+      <textarea id="inp-note" placeholder="Note (optional)" rows="2" style="flex:1;font-size:13px;"></textarea>
+      <div style="flex-shrink:0;min-width:126px;">
+        <div style="font-size:11px;color:#888;margin-bottom:5px;text-align:center;">Payment</div>
+        <div class="ptog">
+          <div class="popt on" data-v="cash"   onclick="setPay('cash')">Cash</div>
+          <div class="popt"    data-v="both"   onclick="setPay('both')">Both</div>
+          <div class="popt"    data-v="online" onclick="setPay('online')">Online</div>
         </div>
-        <div id="both-split" style="display:none;margin-top:6px;gap:4px;flex-direction:column;">
-          <input id="inp-cash-s"   type="number" placeholder="Cash ₹"   style="font-size:12px;padding:5px 8px;" min="0" step="1"/>
-          <input id="inp-online-s" type="number" placeholder="Online ₹" style="font-size:12px;padding:5px 8px;" min="0" step="1"/>
+        <div id="both-split" style="display:none;margin-top:6px;display:none;gap:5px;flex-direction:column;">
+          <input id="inp-cs" type="number" placeholder="Cash ₹"   style="font-size:12px;padding:6px 9px;" min="0" step="1"/>
+          <input id="inp-os" type="number" placeholder="Online ₹" style="font-size:12px;padding:6px 9px;" min="0" step="1"/>
         </div>
       </div>
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:8px;">
-      <button class="btn" onclick="addExpense()">+ Add</button>
+    <div style="display:flex;justify-content:flex-end;margin-top:9px;">
+      <button class="btn" onclick="addExp()">+ Add</button>
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-    <div style="display:flex;gap:4px;">
-      <div class="tab on" id="tab-list"    onclick="switchTab('list')">Entries</div>
-      <div class="tab"    id="tab-summary" onclick="switchTab('summary')">Category</div>
-      <div class="tab"    id="tab-pay"     onclick="switchTab('pay')">Cash vs Online</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+    <div class="tabs">
+      <div class="tab on" id="tab-list"    onclick="goTab('list')">Entries</div>
+      <div class="tab"    id="tab-summary" onclick="goTab('summary')">Category</div>
+      <div class="tab"    id="tab-pay"     onclick="goTab('pay')">Cash vs Online</div>
     </div>
-    <select id="filter-tag" onchange="render()" style="font-size:13px;padding:5px 10px;width:auto;"></select>
+    <select id="ftag" onchange="render()" style="font-size:13px;padding:6px 30px 6px 10px;width:auto;"></select>
   </div>
 
-  <div id="view-list"><div id="expense-list"></div></div>
+  <div id="vlist"><div id="elist"></div></div>
 
-  <div id="view-summary" style="display:none;">
-    <div class="chart-wrap"><canvas id="catChart"></canvas></div>
-    <div id="cat-legend" style="display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:#6b6b66;"></div>
+  <div id="vsummary" style="display:none;">
+    <div class="cw"><canvas id="cc"></canvas></div>
+    <div id="cleg" style="display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:#888;"></div>
   </div>
 
-  <div id="view-pay" style="display:none;">
-    <div class="pay-grid">
-      <div class="mc" style="text-align:center;padding:16px;">
-        <div class="mc-label">Cash total</div>
-        <div id="p-cash"     style="font-size:22px;font-weight:700;color:#1D9E75;">₹0</div>
-        <div id="p-cash-pct" style="font-size:12px;color:#9e9e99;">0%</div>
+  <div id="vpay" style="display:none;">
+    <div class="pgrid">
+      <div class="mc" style="text-align:center;padding:15px;">
+        <div class="mc-l">Cash total</div>
+        <div id="pc" style="font-size:20px;font-weight:700;color:#1D9E75;">₹0</div>
+        <div id="pcp" style="font-size:12px;color:#aaa;">0%</div>
       </div>
-      <div class="mc" style="text-align:center;padding:16px;">
-        <div class="mc-label">Online total</div>
-        <div id="p-online2"     style="font-size:22px;font-weight:700;color:#378ADD;">₹0</div>
-        <div id="p-online-pct"  style="font-size:12px;color:#9e9e99;">0%</div>
+      <div class="mc" style="text-align:center;padding:15px;">
+        <div class="mc-l">Online total</div>
+        <div id="po" style="font-size:20px;font-weight:700;color:#378ADD;">₹0</div>
+        <div id="pop" style="font-size:12px;color:#aaa;">0%</div>
       </div>
     </div>
-    <div class="chart-wrap" style="height:240px;"><canvas id="payChart"></canvas></div>
+    <div class="cw" style="height:220px;"><canvas id="pc2"></canvas></div>
   </div>
 
 </div><!-- /app -->
 
 <!-- Tag Modal -->
-<div id="modal-tag" class="modal-bg" onclick="if(event.target===this)closeTagMgr()">
+<div id="modal-tag" class="modal-bg" onclick="if(event.target===this)closeTM()">
   <div class="modal">
-    <div style="font-size:15px;font-weight:600;margin-bottom:14px;">Manage tags</div>
-    <div id="tag-list-mgr" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
-    <hr style="border:none;border-top:1px solid #e0dfd8;margin:10px 0;"/>
-    <div style="font-size:12px;color:#6b6b66;margin-bottom:8px;">New tag banao</div>
-    <input id="new-tag-name" type="text" placeholder="Tag name" style="margin-bottom:10px;"/>
-    <div style="font-size:12px;color:#6b6b66;margin-bottom:6px;">Color chuno</div>
-    <div id="color-swatches" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:13px;">Tags manage karo</div>
+    <div id="tmlist" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+    <hr style="border:none;border-top:1px solid #eee;margin:10px 0;"/>
+    <div style="font-size:12px;color:#888;margin-bottom:7px;">Naya tag banao</div>
+    <input id="ntname" type="text" placeholder="Tag naam" style="margin-bottom:10px;"/>
+    <div style="font-size:12px;color:#888;margin-bottom:6px;">Color chuno</div>
+    <div id="swatches" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn-ghost" onclick="closeTagMgr()">Cancel</button>
-      <button class="btn" onclick="createTag()">Create</button>
+      <button class="btn-ghost" onclick="closeTM()">Cancel</button>
+      <button class="btn" onclick="makeTag()">Banao</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-//  CONSTANTS
-// ═══════════════════════════════════════════
-const LS_CREDS = 'kharcha_creds'; // {gistId, token, pinHash}
-const FILENAME = 'kharcha.json';
+// ────────────────────────────────────────
+//  CONFIG & CONSTANTS
+// ────────────────────────────────────────
+const LC = 'kc_creds';   // {gistId, token, pinHash}
+const LK = 'kc_cache';   // data cache
+const GF = 'kharcha.json';
 
-const SWATCHES = [
-  {c:'#1D9E75',bg:'#E1F5EE',txt:'#085041'},{c:'#378ADD',bg:'#E6F1FB',txt:'#0C447C'},
-  {c:'#D4537E',bg:'#FBEAF0',txt:'#72243E'},{c:'#D85A30',bg:'#FAECE7',txt:'#711B13'},
-  {c:'#7F77DD',bg:'#EEEDFE',txt:'#3C3489'},{c:'#BA7517',bg:'#FAEEDA',txt:'#633806'},
-  {c:'#888780',bg:'#F1EFE8',txt:'#444441'},{c:'#639922',bg:'#EAF3DE',txt:'#27500A'},
-  {c:'#A32D2D',bg:'#FCEBEB',txt:'#501313'},{c:'#0F6E56',bg:'#E1F5EE',txt:'#04342C'},
+const SW = [
+  {c:'#1D9E75',bg:'#E1F5EE',t:'#085041'},{c:'#378ADD',bg:'#E6F1FB',t:'#0C447C'},
+  {c:'#D4537E',bg:'#FBEAF0',t:'#72243E'},{c:'#D85A30',bg:'#FAECE7',t:'#711B13'},
+  {c:'#7F77DD',bg:'#EEEDFE',t:'#3C3489'},{c:'#BA7517',bg:'#FAEEDA',t:'#633806'},
+  {c:'#888780',bg:'#F1EFE8',t:'#444441'},{c:'#639922',bg:'#EAF3DE',t:'#27500A'},
+  {c:'#A32D2D',bg:'#FCEBEB',t:'#501313'},{c:'#0F6E56',bg:'#E1F5EE',t:'#04342C'},
 ];
-const DEF_TAGS = [
-  {id:'food',label:'Food',c:'#1D9E75',bg:'#E1F5EE',txt:'#085041'},
-  {id:'transport',label:'Transport',c:'#378ADD',bg:'#E6F1FB',txt:'#0C447C'},
-  {id:'shopping',label:'Shopping',c:'#D4537E',bg:'#FBEAF0',txt:'#72243E'},
-  {id:'health',label:'Health',c:'#D85A30',bg:'#FAECE7',txt:'#711B13'},
-  {id:'bills',label:'Bills',c:'#7F77DD',bg:'#EEEDFE',txt:'#3C3489'},
-  {id:'entertainment',label:'Entertainment',c:'#BA7517',bg:'#FAEEDA',txt:'#633806'},
-  {id:'other',label:'Other',c:'#888780',bg:'#F1EFE8',txt:'#444441'},
+const DTAGS = [
+  {id:'food',l:'Food',c:'#1D9E75',bg:'#E1F5EE',t:'#085041'},
+  {id:'transport',l:'Transport',c:'#378ADD',bg:'#E6F1FB',t:'#0C447C'},
+  {id:'shopping',l:'Shopping',c:'#D4537E',bg:'#FBEAF0',t:'#72243E'},
+  {id:'health',l:'Health',c:'#D85A30',bg:'#FAECE7',t:'#711B13'},
+  {id:'bills',l:'Bills',c:'#7F77DD',bg:'#EEEDFE',t:'#3C3489'},
+  {id:'entertain',l:'Entertainment',c:'#BA7517',bg:'#FAEEDA',t:'#633806'},
+  {id:'other',l:'Other',c:'#888780',bg:'#F1EFE8',t:'#444441'},
 ];
 
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
 //  STATE
-// ═══════════════════════════════════════════
-let creds    = null; // {gistId, token, pinHash}
-let expenses = [];
-let tags     = JSON.parse(JSON.stringify(DEF_TAGS));
-let selSwatch= 0, curTab='list', catChart=null, payChart=null, payMode='cash';
-let pinBuf   = '', isSetupMode = false, setupPinFirst = '';
+// ────────────────────────────────────────
+let creds=null, exps=[], tags=JSON.parse(JSON.stringify(DTAGS));
+let selSW=0, curTab='list', cChart=null, pChart=null, payMode='cash';
+let pinBuf='', setupStep=0, setupPin1='';
 
-// ═══════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════
-function getTag(id){return tags.find(t=>t.id===id)||{label:id,c:'#888780',bg:'#F1EFE8',txt:'#444441'};}
+// ────────────────────────────────────────
+//  UTILS
+// ────────────────────────────────────────
+const $=id=>document.getElementById(id);
 function fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN');}
-function hashPin(p){let h=0x811c9dc5;for(let i=0;i<p.length;i++){h^=p.charCodeAt(i);h=(h*0x01000193)>>>0;}return h.toString(16);}
-function lsGet(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function hp(p){let h=0x811c9dc5;for(let i=0;i<p.length;i++){h^=p.charCodeAt(i);h=(h*0x01000193)>>>0;}return h.toString(16);}
+function lsG(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
+function lsS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function gt(id){return tags.find(t=>t.id===id)||{l:id,c:'#888',bg:'#eee',t:'#444'};}
+function ssm(msg,cls){const e=$('sync-msg');e.textContent=msg;e.className=cls||'';if(cls==='saved')setTimeout(()=>{e.textContent='';e.className='';},2500);}
 
-function setSS(msg,ok){
-  const el=document.getElementById('sync-status');
-  el.textContent=msg;
-  el.style.color=ok===true?'#1D9E75':ok===false?'#c0392b':'#9e9e99';
-}
-
-// ═══════════════════════════════════════════
-//  GITHUB GIST API
-// ═══════════════════════════════════════════
-async function gistGet(){
-  setSS('Syncing…');
+// ────────────────────────────────────────
+//  GITHUB GIST
+// ────────────────────────────────────────
+async function gGet(){
   try{
-    const res=await fetch(`https://api.github.com/gists/${creds.gistId}`,{
+    const r=await fetch(`https://api.github.com/gists/${creds.gistId}`,{
       headers:{Authorization:`token ${creds.token}`,Accept:'application/vnd.github.v3+json'}
     });
-    if(!res.ok){setSS('Sync failed',false);return false;}
-    const data=await res.json();
-    const raw=data.files[FILENAME]?.content;
-    if(raw){
-      const d=JSON.parse(raw);
-      expenses=d.expenses||[];
-      if(d.tags&&d.tags.length)tags=d.tags;
+    if(!r.ok){ssm('Sync failed ✗','errclr');return false;}
+    const d=await r.json();
+    const raw=d.files&&d.files[GF]&&d.files[GF].content;
+    if(raw && raw.trim()!=='{}' && raw.trim()!==''){
+      try{
+        const p=JSON.parse(raw);
+        exps=p.expenses||[];
+        if(p.tags&&p.tags.length>0)tags=p.tags;
+      }catch(e){}
     }
-    setSS('✓ Synced',true);
-    setTimeout(()=>setSS(''),3000);
+    lsS(LK,{expenses:exps,tags});
+    ssm('✓ Synced','saved');
     return true;
-  }catch(e){setSS('Offline – local data',false);return false;}
+  }catch(e){
+    // offline — use cache
+    const c=lsG(LK);
+    if(c){exps=c.expenses||[];if(c.tags&&c.tags.length)tags=c.tags;}
+    ssm('Offline (cache)');
+    return false;
+  }
 }
 
-async function gistSet(){
-  setSS('Saving…');
+async function gSet(){
+  lsS(LK,{expenses:exps,tags}); // always save locally first
+  ssm('Saving…');
   try{
     const body={files:{}};
-    body.files[FILENAME]={content:JSON.stringify({expenses,tags})};
-    const res=await fetch(`https://api.github.com/gists/${creds.gistId}`,{
+    body.files[GF]={content:JSON.stringify({expenses:exps,tags})};
+    const r=await fetch(`https://api.github.com/gists/${creds.gistId}`,{
       method:'PATCH',
       headers:{Authorization:`token ${creds.token}`,'Content-Type':'application/json'},
       body:JSON.stringify(body)
     });
-    if(res.ok){setSS('✓ Saved',true);setTimeout(()=>setSS(''),2500);}
-    else setSS('Save failed',false);
-  }catch(e){setSS('Offline',false);}
+    if(r.ok)ssm('✓ Saved','saved');
+    else ssm('Save failed ✗','errclr');
+  }catch(e){ssm('Offline – saved locally');}
 }
 
-// ═══════════════════════════════════════════
-//  PIN & AUTH
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
+//  AUTH / PIN
+// ────────────────────────────────────────
 function initLogin(){
-  creds=lsGet(LS_CREDS);
+  creds=lsG(LC);
+  pinBuf=''; setupStep=0; setupPin1='';
   if(!creds){
-    // first time — show setup
-    isSetupMode=true;
-    document.getElementById('gist-setup').style.display='';
-    document.getElementById('normal-login').style.display='none';
-    document.getElementById('pin-pad').style.display='grid';
+    // first time
+    $('section-setup').style.display='';
+    $('section-login').style.display='none';
   } else {
-    isSetupMode=false;
-    document.getElementById('gist-setup').style.display='none';
-    document.getElementById('normal-login').style.display='';
-    document.getElementById('pin-pad').style.display='grid';
+    $('section-setup').style.display='none';
+    $('section-login').style.display='';
   }
-  pinBuf=''; setupPinFirst='';
+  updDots();
 }
 
 function pk(k){
-  if(k==='clear'){pinBuf='';updateDots();return;}
-  if(k==='back'){pinBuf=pinBuf.slice(0,-1);updateDots();return;}
+  if(k==='clear'){pinBuf='';updDots();return;}
+  if(k==='back'){pinBuf=pinBuf.slice(0,-1);updDots();return;}
   if(pinBuf.length>=4)return;
-  pinBuf+=k; updateDots();
-  if(pinBuf.length===4) setTimeout(isSetupMode?handleSetup:handleLogin,120);
+  pinBuf+=k; updDots();
+  if(pinBuf.length===4){
+    setTimeout(!creds?handleSetup:handleLogin, 150);
+  }
 }
 
-function updateDots(){
+function updDots(){
   const n=pinBuf.length;
-  const id=isSetupMode?'setup-dots':'login-dots';
-  const el=document.getElementById(id);
-  if(!el)return;
-  [...el.children].forEach((d,i)=>d.classList.toggle('filled',i<n));
+  const id=!creds?'setup-dots':'login-dots';
+  const el=$(id); if(!el)return;
+  [...el.children].forEach((d,i)=>d.classList.toggle('on',i<n));
 }
 
 function handleSetup(){
-  const gistId=document.getElementById('inp-gist-id').value.trim();
-  const token=document.getElementById('inp-gh-token').value.trim();
+  const gistId=$('si-gist').value.trim();
+  const token =$('si-token').value.trim();
   if(!gistId||!token){
-    document.getElementById('setup-err').textContent='Gist ID aur Token dono required hain.';
-    pinBuf='';updateDots();return;
+    $('setup-err').textContent='Gist ID aur Token dono daalo!';
+    pinBuf=''; updDots(); return;
   }
-  if(!setupPinFirst){
-    setupPinFirst=pinBuf; pinBuf='';
-    document.getElementById('setup-err').textContent='PIN confirm karo — dobara daalo.';
-    updateDots(); return;
+  if(setupStep===0){
+    setupPin1=pinBuf; pinBuf=''; setupStep=1;
+    $('setup-label').textContent='PIN dobara confirm karo';
+    $('setup-err').textContent='';
+    updDots(); return;
   }
-  if(pinBuf!==setupPinFirst){
-    document.getElementById('setup-err').textContent='PINs match nahi kiya. Phir try karo.';
-    pinBuf='';setupPinFirst='';updateDots();return;
+  if(pinBuf!==setupPin1){
+    $('setup-err').textContent='PIN match nahi hua, phir try karo';
+    pinBuf=''; setupPin1=''; setupStep=0;
+    $('setup-label').textContent='4-digit PIN banao';
+    updDots(); return;
   }
-  // save creds
-  creds={gistId,token,pinHash:hashPin(pinBuf)};
-  lsSet(LS_CREDS,creds);
-  document.getElementById('setup-err').textContent='';
-  sessionStorage.setItem('k_auth','1');
+  creds={gistId,token,pinHash:hp(pinBuf)};
+  lsS(LC,creds);
+  sessionStorage.setItem('ka','1');
   bootApp();
 }
 
 function handleLogin(){
-  if(hashPin(pinBuf)===creds.pinHash){
-    document.getElementById('login-err').textContent='';
-    sessionStorage.setItem('k_auth','1');
+  if(hp(pinBuf)===creds.pinHash){
+    $('login-err').textContent='';
+    sessionStorage.setItem('ka','1');
     bootApp();
   } else {
-    document.getElementById('login-err').textContent='Wrong PIN. Try again.';
-    pinBuf=''; updateDots();
+    $('login-err').textContent='Galat PIN, phir try karo';
+    pinBuf=''; updDots();
   }
 }
 
-function lockApp(){
-  sessionStorage.removeItem('k_auth');
-  document.getElementById('app-screen').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  pinBuf=''; initLogin();
+function doLock(){
+  sessionStorage.removeItem('ka');
+  $('app-screen').style.display='none';
+  $('login-screen').style.display='flex';
+  initLogin();
 }
 
-function resetAll(){
-  if(!confirm('Sab data aur credentials delete honge. Sure?'))return;
-  localStorage.removeItem(LS_CREDS);
-  sessionStorage.removeItem('k_auth');
-  location.reload();
+function doReset(){
+  if(!confirm('Sab data aur settings delete ho jayenge. Pakka?'))return;
+  localStorage.clear(); sessionStorage.clear(); location.reload();
 }
 
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
 //  BOOT
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
 async function bootApp(){
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-screen').style.display='';
-  const ok=await gistGet();
-  if(!ok){
-    // fallback: try local cache
-    const cached=lsGet('kharcha_cache');
-    if(cached){expenses=cached.expenses||[];if(cached.tags&&cached.tags.length)tags=cached.tags;}
-  } else {
-    lsSet('kharcha_cache',{expenses,tags});
-  }
+  $('login-screen').style.display='none';
+  $('app-screen').style.display='';
+  ssm('Loading…');
+  await gGet();
   render();
 }
 
-async function syncNow(silent){
-  const ok=await gistGet();
-  if(ok)lsSet('kharcha_cache',{expenses,tags});
+async function doSync(){
+  ssm('Syncing…');
+  await gGet();
   render();
 }
 
-// ═══════════════════════════════════════════
-//  APP FEATURES
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
+//  APP LOGIC
+// ────────────────────────────────────────
 function setPay(v){
   payMode=v;
-  document.querySelectorAll('.pay-opt').forEach(el=>el.classList.toggle('on',el.dataset.v===v));
-  document.getElementById('both-split').style.display=v==='both'?'flex':'none';
+  document.querySelectorAll('.popt').forEach(e=>e.classList.toggle('on',e.dataset.v===v));
+  $('both-split').style.display=v==='both'?'flex':'none';
 }
 
-function populateTagSelects(){
-  ['inp-tag','filter-tag'].forEach((id,i)=>{
-    const sel=document.getElementById(id),prev=sel.value;
-    sel.innerHTML=(i===1?'<option value="all">All categories</option>':'')+
-      tags.map(t=>`<option value="${t.id}">${t.label}</option>`).join('');
-    if(prev)sel.value=prev;
+function fillSelects(){
+  ['inp-tag','ftag'].forEach((id,i)=>{
+    const s=$(id),p=s.value;
+    s.innerHTML=(i===1?'<option value="all">All categories</option>':'')+
+      tags.map(t=>`<option value="${t.id}">${t.l||t.label}</option>`).join('');
+    if(p)s.value=p;
   });
 }
 
-async function addExpense(){
-  const desc=document.getElementById('inp-desc').value.trim();
-  const amtRaw=parseFloat(document.getElementById('inp-amt').value);
-  const tag=document.getElementById('inp-tag').value;
-  const note=document.getElementById('inp-note').value.trim();
-  if(!desc||!amtRaw||amtRaw<=0){document.getElementById('inp-desc').focus();return;}
-  let cashAmt=0,onlineAmt=0;
-  if(payMode==='cash')cashAmt=amtRaw;
-  else if(payMode==='online')onlineAmt=amtRaw;
-  else{
-    cashAmt=parseFloat(document.getElementById('inp-cash-s').value)||0;
-    onlineAmt=parseFloat(document.getElementById('inp-online-s').value)||0;
-    if(cashAmt+onlineAmt===0)cashAmt=amtRaw;
-  }
-  expenses.unshift({id:Date.now(),desc,amt:amtRaw,tag,note,payMode,cashAmt,onlineAmt,date:new Date().toISOString()});
-  lsSet('kharcha_cache',{expenses,tags});
-  ['inp-desc','inp-amt','inp-note','inp-cash-s','inp-online-s'].forEach(id=>document.getElementById(id).value='');
-  render();
-  document.getElementById('inp-desc').focus();
-  await gistSet();
+async function addExp(){
+  const desc=$('inp-desc').value.trim();
+  const amt =parseFloat($('inp-amt').value);
+  const tag =$('inp-tag').value;
+  const note=$('inp-note').value.trim();
+  if(!desc||!amt||amt<=0){$('inp-desc').focus();return;}
+  let ca=0,oa=0;
+  if(payMode==='cash')ca=amt;
+  else if(payMode==='online')oa=amt;
+  else{ca=parseFloat($('inp-cs').value)||0;oa=parseFloat($('inp-os').value)||0;if(ca+oa===0)ca=amt;}
+  exps.unshift({id:Date.now(),desc,amt,tag,note,payMode,ca,oa,date:new Date().toISOString()});
+  ['inp-desc','inp-amt','inp-note','inp-cs','inp-os'].forEach(id=>$(id).value='');
+  render(); $('inp-desc').focus();
+  await gSet();
 }
 
-async function deleteExpense(id){
+async function delExp(id){
   if(!confirm('Delete?'))return;
-  expenses=expenses.filter(e=>e.id!==id);
-  lsSet('kharcha_cache',{expenses,tags});
-  render();
-  await gistSet();
+  exps=exps.filter(e=>e.id!==id);
+  render(); await gSet();
 }
 
-function filtered(){
-  const f=document.getElementById('filter-tag').value;
-  return f==='all'?expenses:expenses.filter(e=>e.tag===f);
-}
+function filt(){const f=$('ftag').value;return f==='all'?exps:exps.filter(e=>e.tag===f);}
 
-function switchTab(tab){
-  curTab=tab;
-  ['list','summary','pay'].forEach(t=>{
-    document.getElementById('tab-'+t).className='tab'+(t===tab?' on':'');
-    document.getElementById('view-'+t).style.display=t===tab?'':'none';
+function goTab(t){
+  curTab=t;
+  ['list','summary','pay'].forEach(x=>{
+    $('tab-'+x).className='tab'+(x===t?' on':'');
+    $('v'+x).style.display=x===t?'':'none';
   });
-  if(tab==='summary')renderCatChart();
-  if(tab==='pay')renderPayChart();
-}
-
-function renderMetrics(list){
-  const total=list.reduce((s,e)=>s+e.amt,0);
-  const cash=list.reduce((s,e)=>s+(e.cashAmt||0),0);
-  const online=list.reduce((s,e)=>s+(e.onlineAmt||0),0);
-  document.getElementById('m-total').textContent=fmt(total);
-  document.getElementById('m-cash').textContent=fmt(cash);
-  document.getElementById('m-online').textContent=fmt(online);
-  document.getElementById('m-count').textContent=list.length;
-}
-
-function renderList(list){
-  const el=document.getElementById('expense-list');
-  if(!list.length){el.innerHTML='<div style="color:#9e9e99;font-size:13px;padding:2rem 0;text-align:center;">Koi entry nahi — upar add karo.</div>';return;}
-  el.innerHTML=list.map(e=>{
-    const tg=getTag(e.tag);
-    const ds=new Date(e.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-    const pi=e.payMode==='cash'?'💵':e.payMode==='online'?'📱':'⚡';
-    const both=e.payMode==='both'?`<span style="font-size:10px;color:#9e9e99;"> Cash ${fmt(e.cashAmt||0)} + Online ${fmt(e.onlineAmt||0)}</span>`:'';
-    return `<div class="exp-row">
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.desc}</div>
-        ${e.note?`<div style="font-size:12px;color:#9e9e99;margin-top:3px;line-height:1.3;">${e.note}</div>`:''}
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
-          <span class="tag-pill" style="background:${tg.bg};color:${tg.txt};">${tg.label}</span>
-          <span style="font-size:11px;color:#9e9e99;">${pi} ${ds}</span>${both}
-        </div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div style="font-size:14px;font-weight:700;">${fmt(e.amt)}</div>
-        <button class="del-btn" onclick="deleteExpense(${e.id})">✕</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderCatChart(){
-  const list=filtered(),totals={};
-  list.forEach(e=>{totals[e.tag]=(totals[e.tag]||0)+e.amt;});
-  const sorted=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
-  const data=sorted.map(t=>Math.round(totals[t]));
-  const colors=sorted.map(t=>getTag(t).c);
-  const labels=sorted.map(t=>getTag(t).label);
-  const total=data.reduce((s,v)=>s+v,0);
-  document.getElementById('cat-legend').innerHTML=sorted.map((t,i)=>{
-    const pct=total?Math.round(data[i]/total*100):0;
-    return `<span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};display:inline-block;"></span>${labels[i]} — ${fmt(data[i])} (${pct}%)</span>`;
-  }).join('');
-  if(catChart){catChart.destroy();catChart=null;}
-  if(!sorted.length)return;
-  catChart=new Chart(document.getElementById('catChart'),{
-    type:'doughnut',
-    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'transparent',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed)} (${total?Math.round(ctx.parsed/total*100):0}%)`}}}}
-  });
-}
-
-function renderPayChart(){
-  const list=filtered();
-  const cashT=Math.round(list.reduce((s,e)=>s+(e.cashAmt||0),0));
-  const onlineT=Math.round(list.reduce((s,e)=>s+(e.onlineAmt||0),0));
-  const total=cashT+onlineT;
-  document.getElementById('p-cash').textContent=fmt(cashT);
-  document.getElementById('p-online2').textContent=fmt(onlineT);
-  document.getElementById('p-cash-pct').textContent=total?Math.round(cashT/total*100)+'%':'0%';
-  document.getElementById('p-online-pct').textContent=total?Math.round(onlineT/total*100)+'%':'0%';
-  if(payChart){payChart.destroy();payChart=null;}
-  if(!total)return;
-  payChart=new Chart(document.getElementById('payChart'),{
-    type:'bar',
-    data:{labels:['Cash','Online'],datasets:[{data:[cashT,onlineT],backgroundColor:['#1D9E75','#378ADD'],borderRadius:6,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed.y)}`}}},
-      scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(128,128,128,0.15)'}},x:{grid:{display:false}}}}
-  });
+  if(t==='summary')drawCat();
+  if(t==='pay')drawPay();
 }
 
 function render(){
-  const list=filtered();
-  populateTagSelects();renderMetrics(list);renderList(list);
-  document.getElementById('month-label').textContent=new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'});
-  if(curTab==='summary')renderCatChart();
-  if(curTab==='pay')renderPayChart();
+  const list=filt();
+  fillSelects();
+  // metrics
+  const tot=list.reduce((s,e)=>s+e.amt,0);
+  const cas=list.reduce((s,e)=>s+(e.ca||0),0);
+  const onl=list.reduce((s,e)=>s+(e.oa||0),0);
+  $('m-total').textContent=fmt(tot);
+  $('m-cash').textContent=fmt(cas);
+  $('m-online').textContent=fmt(onl);
+  $('m-count').textContent=list.length;
+  $('month-label').textContent=new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  // list
+  const el=$('elist');
+  if(!list.length){el.innerHTML='<div style="color:#bbb;font-size:13px;padding:2rem 0;text-align:center;">Koi entry nahi — upar add karo</div>';
+  }else{
+    el.innerHTML=list.map(e=>{
+      const tg=gt(e.tag);
+      const ds=new Date(e.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      const pi=e.payMode==='cash'?'💵':e.payMode==='online'?'📱':'⚡';
+      const both=e.payMode==='both'?`<span style="font-size:10px;color:#bbb;"> ${fmt(e.ca||0)}+${fmt(e.oa||0)}</span>`:'';
+      return `<div class="erow">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.desc}</div>
+          ${e.note?`<div style="font-size:12px;color:#aaa;margin-top:2px;line-height:1.3;">${e.note}</div>`:''}
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
+            <span class="tag-pill" style="background:${tg.bg};color:${tg.t||tg.txt};">${tg.l||tg.label}</span>
+            <span style="font-size:11px;color:#bbb;">${pi} ${ds}${both}</span>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:14px;font-weight:700;">${fmt(e.amt)}</div>
+          <button class="xbtn" onclick="delExp(${e.id})">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if(curTab==='summary')drawCat();
+  if(curTab==='pay')drawPay();
 }
 
-// Tags
-function openTagMgr(){document.getElementById('modal-tag').classList.add('open');renderTagMgr();}
-function closeTagMgr(){document.getElementById('modal-tag').classList.remove('open');}
-function renderTagMgr(){
-  document.getElementById('tag-list-mgr').innerHTML=tags.map(t=>{
-    const isDef=DEF_TAGS.some(d=>d.id===t.id);
-    return `<span class="tag-pill" style="background:${t.bg};color:${t.txt};gap:6px;padding:4px 10px;">${t.label}${isDef?'':`<span onclick="deleteTag('${t.id}')" style="cursor:pointer;font-size:11px;opacity:.6;margin-left:3px;">✕</span>`}</span>`;
+function drawCat(){
+  const list=filt(),tots={};
+  list.forEach(e=>{tots[e.tag]=(tots[e.tag]||0)+e.amt;});
+  const sk=Object.keys(tots).sort((a,b)=>tots[b]-tots[a]);
+  const data=sk.map(t=>Math.round(tots[t]));
+  const cols=sk.map(t=>gt(t).c);
+  const lbls=sk.map(t=>gt(t).l||gt(t).label);
+  const tot=data.reduce((s,v)=>s+v,0);
+  $('cleg').innerHTML=sk.map((t,i)=>{
+    const p=tot?Math.round(data[i]/tot*100):0;
+    return `<span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:${cols[i]};display:inline-block;"></span>${lbls[i]} — ${fmt(data[i])} (${p}%)</span>`;
   }).join('');
-  document.getElementById('color-swatches').innerHTML=SWATCHES.map((s,i)=>
-    `<div class="swatch ${i===selSwatch?'on':''}" style="background:${s.c};" onclick="selectSwatch(${i})"></div>`
+  if(cChart){cChart.destroy();cChart=null;}
+  if(!sk.length)return;
+  cChart=new Chart($('cc'),{type:'doughnut',
+    data:{labels:lbls,datasets:[{data,backgroundColor:cols,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed)} (${tot?Math.round(ctx.parsed/tot*100):0}%)`}}}}
+  });
+}
+
+function drawPay(){
+  const list=filt();
+  const ct=Math.round(list.reduce((s,e)=>s+(e.ca||0),0));
+  const ot=Math.round(list.reduce((s,e)=>s+(e.oa||0),0));
+  const tot=ct+ot;
+  $('pc').textContent=fmt(ct); $('po').textContent=fmt(ot);
+  $('pcp').textContent=tot?Math.round(ct/tot*100)+'%':'0%';
+  $('pop').textContent=tot?Math.round(ot/tot*100)+'%':'0%';
+  if(pChart){pChart.destroy();pChart=null;}
+  if(!tot)return;
+  pChart=new Chart($('pc2'),{type:'bar',
+    data:{labels:['Cash','Online'],datasets:[{data:[ct,ot],backgroundColor:['#1D9E75','#378ADD'],borderRadius:7,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed.y)}`}}},
+      scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.06)'}},x:{grid:{display:false}}}}
+  });
+}
+
+// ── Tags ──
+function openTM(){$('modal-tag').classList.add('open');drawTM();}
+function closeTM(){$('modal-tag').classList.remove('open');}
+function drawTM(){
+  $('tmlist').innerHTML=tags.map(tg=>{
+    const def=DTAGS.some(d=>d.id===tg.id);
+    const lbl=tg.l||tg.label;
+    return `<span class="tag-pill" style="background:${tg.bg};color:${tg.t||tg.txt};padding:5px 10px;gap:5px;">${lbl}${def?'':`<span onclick="rmTag('${tg.id}')" style="cursor:pointer;opacity:.5;font-size:12px;margin-left:2px;">✕</span>`}</span>`;
+  }).join('');
+  $('swatches').innerHTML=SW.map((s,i)=>
+    `<div class="swatch ${i===selSW?'on':''}" style="background:${s.c};" onclick="pSW(${i})"></div>`
   ).join('');
 }
-function selectSwatch(i){selSwatch=i;renderTagMgr();}
-async function createTag(){
-  const name=document.getElementById('new-tag-name').value.trim();
-  if(!name)return;
-  const s=SWATCHES[selSwatch];
-  tags.push({id:'c_'+Date.now(),label:name,c:s.c,bg:s.bg,txt:s.txt});
-  document.getElementById('new-tag-name').value='';
-  populateTagSelects();renderTagMgr();
-  lsSet('kharcha_cache',{expenses,tags});
-  await gistSet();
+function pSW(i){selSW=i;drawTM();}
+async function makeTag(){
+  const nm=$('ntname').value.trim(); if(!nm)return;
+  const s=SW[selSW];
+  tags.push({id:'u_'+Date.now(),l:nm,c:s.c,bg:s.bg,t:s.t});
+  $('ntname').value=''; fillSelects(); drawTM();
+  lsS(LK,{expenses:exps,tags}); await gSet();
 }
-async function deleteTag(id){
+async function rmTag(id){
   tags=tags.filter(t=>t.id!==id);
-  expenses.forEach(e=>{if(e.tag===id)e.tag='other';});
-  lsSet('kharcha_cache',{expenses,tags});
-  populateTagSelects();renderTagMgr();render();
-  await gistSet();
+  exps.forEach(e=>{if(e.tag===id)e.tag='other';});
+  fillSelects(); drawTM(); render();
+  lsS(LK,{expenses:exps,tags}); await gSet();
 }
 
 function exportCSV(){
   const rows=[['Date','Description','Amount','Tag','Payment','Cash','Online','Note']];
-  expenses.forEach(e=>rows.push([new Date(e.date).toLocaleDateString('en-IN'),e.desc,e.amt,getTag(e.tag).label,e.payMode||'cash',e.cashAmt||0,e.onlineAmt||0,e.note||'']));
+  exps.forEach(e=>rows.push([new Date(e.date).toLocaleDateString('en-IN'),e.desc,e.amt,gt(e.tag).l||gt(e.tag).label,e.payMode||'cash',e.ca||0,e.oa||0,e.note||'']));
   const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='kharcha_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='kharcha_'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
 }
 
-document.getElementById('inp-desc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inp-amt').focus();});
-document.getElementById('inp-amt').addEventListener('keydown',e=>{if(e.key==='Enter')addExpense();});
+$('inp-desc').addEventListener('keydown',e=>{if(e.key==='Enter')$('inp-amt').focus();});
+$('inp-amt').addEventListener('keydown',e=>{if(e.key==='Enter')addExp();});
 
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
 //  INIT
-// ═══════════════════════════════════════════
+// ────────────────────────────────────────
 initLogin();
-if(sessionStorage.getItem('k_auth') && lsGet(LS_CREDS)){
-  creds=lsGet(LS_CREDS);
+// resume session if already authenticated this tab session
+if(sessionStorage.getItem('ka') && lsG(LC)){
+  creds=lsG(LC);
   bootApp();
 }
 </script>
