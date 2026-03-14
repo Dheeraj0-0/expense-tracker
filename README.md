@@ -1,37 +1,36 @@
 # 💸 Kharcha - Personal Expense Tracker
 
-Ek simple, fast, aur secure browser-based expense tracker. Ye app purely frontend par chalta hai aur data ko securely save karne ke liye serverless architecture (GitHub Gists + Google Sheets) ka use karta hai.
+Kharcha is a lightweight, fast, and secure browser-based expense tracking application. Built entirely on the client side, it leverages a serverless architecture—utilizing GitHub Gists and Google Sheets—for seamless and secure data synchronization.
 
 ## ✨ Features
-* **100% Client-Side:** Koi dedicated database ya heavy backend server nahi. Bas HTML file open karo aur chalao.
-* **Dual Cloud Sync:** * **Primary:** GitHub Gist (JSON format mein state maintain karne ke liye).
-  * **Backup:** Google Sheets (Data ko table format mein neatly dekhne ke liye).
-* **Secure Auth:** 4-digit PIN protection.
-* **Smart Storage:** API tokens aur PIN safely browser ki `localStorage` mein store hote hain (code mein hardcoded nahi).
-* **Visual Insights:** Chart.js ke through category-wise aur payment mode (Cash vs Online) ka breakdown.
-* **Export:** One-click CSV download option.
+* **100% Client-Side:** No dedicated backend server or database is required. Simply open the HTML file in any browser to start tracking.
+* **Dual Cloud Synchronization:** * *Primary Storage:* GitHub Gists (maintains application state in JSON format).
+  * *Backup Storage:* Google Sheets (provides a structured, tabular view of your expense records).
+* **Secure Authentication:** Protected by a custom 4-digit PIN.
+* **Smart Credential Management:** API tokens and PIN hashes are securely stored in the browser's `localStorage`. No sensitive credentials are hardcoded in the repository.
+* **Visual Insights:** Interactive charts powered by Chart.js provide category-wise and payment mode (Cash vs. Online) financial breakdowns.
+* **Data Export:** One-click export functionality to download records as a CSV file.
 
 ## 🛠️ Tech Stack
-* HTML, CSS, Vanilla JavaScript
-* [Chart.js](https://www.chartjs.org/) (Data visualization ke liye)
+* HTML5, CSS3, Vanilla JavaScript
+* [Chart.js](https://www.chartjs.org/) (Data Visualization)
 * GitHub REST API (Gists)
-* Google Apps Script (Web App backend)
+* Google Apps Script (Web App Backend)
 
-## 🚀 Setup Instructions (New Device/Browser)
+## 🚀 Setup & Installation
 
-Kyunki ye ek personal tool hai, kisi naye phone ya laptop par ise setup karne ke liye bas ye steps follow karein:
+To set up this application on a new device or browser, follow these steps:
 
-### 1. App Open Karein
-* Repository ko clone karein aur `index.html` ko kisi bhi browser mein open karein. (Ya isey GitHub Pages par host kar lein).
+### 1. Launch the Application
+* Clone the repository and open `index.html` in your preferred web browser, or access it via your hosted GitHub Pages link.
 
-### 2. GitHub Token Set Karein
-* App ki login screen par **"Set Token"** button par click karein.
-* Apna GitHub Personal Access Token (`ghp_...`) paste karein. *(Dhyan rahe ki token ke paas 'gist' ki permission ho).*
-* Token securely browser mein save ho jayega.
+### 2. Configure Your GitHub Token
+* On the login screen, click the **"Set Token"** button.
+* Paste your GitHub Personal Access Token (ensure it has `gist` permissions). This token will be securely saved in your browser's local storage.
 
-### 3. Google Sheets Backup
-* Code mein `GS_WEBAPP_URL` aur `GS_SYNC_KEY` set hai. 
-* Jaise hi aap token set karke koi naya kharcha add karenge ya "Sync" dabayenge, data automatically aapki connected Google Sheet mein chala jayega.
+### 3. Google Sheets Integration
+* The `GS_WEBAPP_URL` and `GS_SYNC_KEY` are pre-configured in the source code. 
+* Once your token is set, adding or syncing expenses will automatically back up your data to the designated Google Sheet.
 
-## 🔒 Security Note
-Security reasons ki wajah se GitHub token ya PIN kabhi bhi source code mein hardcode nahi kiye gaye hain. Agar aap kabhi token reset karna chahein, toh browser ka local data clear karke dobara "Set Token" use kar sakte hain.
+## 🔒 Security Disclaimer
+For security purposes, personal access tokens and PINs are strictly excluded from the source code. To reset your credentials, simply clear your browser's local storage data and reconfigure the token via the application interface.
