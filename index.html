@@ -352,6 +352,13 @@ async function gGet(){
   if(c){applyPayload(c);}
   const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
   let rp=null;
+
+  if(!GH_TOK){
+    sm('Sync token missing — local mode','#888');
+    const c=lsG(CACHE);
+    if(c){if(c.expenses)exps=c.expenses;if(c.tags&&c.tags.length)tags=c.tags;}
+    return false;
+  }
   try{
     const gp=await fetchGistPayload();
     if(gp)rp=gp;
@@ -370,6 +377,9 @@ async function gSet(){
   lsS(CACHE,p);
   const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
   if(!hasCloud){sm('Saved locally','#888');return;}
+=======
+  lsS(CACHE,{expenses:exps,tags});
+  if(!GH_TOK){sm('Saved locally','#888');return;}
   sm('Saving…','#aaa');
   let n=0;
   try{
