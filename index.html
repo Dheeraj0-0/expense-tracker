@@ -259,8 +259,10 @@ select{
 <script>
 // ── HARDCODED CREDENTIALS ──
 const GIST_ID = 'ebb25ba8ddeef011f9f79d1c2cfc9e74';
-const GH_TOK  = process.env.MY_APP_TOKEN;
+const GH_TOK  = (window.MY_APP_TOKEN || '').trim();
 const GF      = 'kharcha.json';
+const GS_WEBAPP_URL = (window.GS_WEBAPP_URL || '').trim();
+const GS_SYNC_KEY   = (window.GS_SYNC_KEY || '').trim();
 const PIN_KEY = 'kharcha_pin';
 const CACHE   = 'kharcha_cache';
 
@@ -285,6 +287,9 @@ const DTAGS=[
 let exps=[], tags=JSON.parse(JSON.stringify(DTAGS));
 let selSW=0, curT='list', cChart=null, pChart=null, payM='cash';
 let pinBuf='', pinStep=0, pin1='';
+let cloudPinHash='';
+let syncTimer=null;
+const AUTO_SYNC_MS=120000;
 
 // ── HELPERS ──
 const $=id=>document.getElementById(id);
@@ -294,56 +299,105 @@ function lsG(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return 
 function lsS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function gt(id){return tags.find(t=>t.id===id)||{l:id,c:'#888',bg:'#eee',t:'#444'};}
 function sm(msg,col){const e=$('smsg');e.textContent=msg;e.style.color=col||'#aaa';if(col==='#1D9E75')setTimeout(()=>{e.textContent='';},2500);}
+function payload(){return {expenses:exps,tags,pinHash:cloudPinHash||lsG(PIN_KEY)||'',updatedAt:new Date().toISOString()};}
+function applyPayload(p){
+  if(!p||typeof p!=='object')return false;
+  if(Array.isArray(p.expenses))exps=p.expenses;
+  if(Array.isArray(p.tags)&&p.tags.length)tags=p.tags;
+  if(p.pinHash){cloudPinHash=p.pinHash;if(!lsG(PIN_KEY))lsS(PIN_KEY,p.pinHash);}
+  lsS(CACHE,{expenses:exps,tags,pinHash:cloudPinHash,updatedAt:p.updatedAt||new Date().toISOString()});
+  return true;
+}
+
+async function fetchGistPayload(){
+  if(!GH_TOK)return null;
+  const r=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+    headers:{Authorization:`token ${GH_TOK}`,Accept:'application/vnd.github.v3+json'},
+    cache:'no-store'
+  });
+  if(!r.ok)return null;
+  const d=await r.json();
+  const raw=d.files&&d.files[GF]&&d.files[GF].content;
+  if(!raw)return null;
+  try{return JSON.parse(raw);}catch(e){return null;}
+}
+
+async function pushGistPayload(p){
+  if(!GH_TOK)return false;
+  const body={files:{}};
+  body.files[GF]={content:JSON.stringify(p)};
+  const r=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+    method:'PATCH',
+    headers:{Authorization:`token ${GH_TOK}`,'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  return r.ok;
+}
+
+async function pullGS(){
+  if(!GS_WEBAPP_URL)return null;
+  const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'pull',key:GS_SYNC_KEY})});
+  if(!r.ok)return null;
+  const d=await r.json();
+  return d&&((d.data&&typeof d.data==='object'&&d.data)||d.payload||d);
+}
+
+async function pushGS(p){
+  if(!GS_WEBAPP_URL)return false;
+  const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'push',key:GS_SYNC_KEY,payload:p})});
+  return r.ok;
+}
 
 // ── GIST API ──
 async function gGet(){
+  const c=lsG(CACHE);
+  if(c){applyPayload(c);}
+  const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
+  let rp=null;
   try{
-    const r=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
-      headers:{Authorization:`token ${GH_TOK}`,Accept:'application/vnd.github.v3+json'},
-      cache:'no-store'
-    });
-    if(!r.ok){sm('Sync failed','#d0322e');return false;}
-    const d=await r.json();
-    const raw=d.files&&d.files[GF]&&d.files[GF].content;
-    if(raw){
-      try{
-        const p=JSON.parse(raw);
-        if(p.expenses)exps=p.expenses;
-        if(p.tags&&p.tags.length)tags=p.tags;
-        lsS(CACHE,{expenses:exps,tags});
-      }catch(e){}
-    }
-    sm('✓ Synced','#1D9E75');
-    return true;
-  }catch(e){
-    sm('Offline — cache se','#888');
-    const c=lsG(CACHE);
-    if(c){if(c.expenses)exps=c.expenses;if(c.tags&&c.tags.length)tags=c.tags;}
-    return false;
-  }
+    const gp=await fetchGistPayload();
+    if(gp)rp=gp;
+  }catch(e){}
+  try{
+    const sp=await pullGS();
+    if(sp&&(!rp||new Date(sp.updatedAt||0)>new Date(rp.updatedAt||0)))rp=sp;
+  }catch(e){}
+  if(rp){applyPayload(rp);sm('✓ Synced','#1D9E75');return true;}
+  sm(hasCloud?'Offline — cache se':'Cloud not configured — local mode','#888');
+  return false;
 }
 
 async function gSet(){
-  lsS(CACHE,{expenses:exps,tags});
+  const p=payload();
+  lsS(CACHE,p);
+  const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
+  if(!hasCloud){sm('Saved locally','#888');return;}
   sm('Saving…','#aaa');
+  let n=0;
   try{
-    const body={files:{}};
-    body.files[GF]={content:JSON.stringify({expenses:exps,tags})};
-    const r=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
-      method:'PATCH',
-      headers:{Authorization:`token ${GH_TOK}`,'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    sm(r.ok?'✓ Saved':'Save failed',r.ok?'#1D9E75':'#d0322e');
-  }catch(e){sm('Offline — locally saved','#888');}
+    if(await pushGistPayload(p))n++;
+  }catch(e){}
+  try{
+    if(await pushGS(p))n++;
+  }catch(e){}
+  if(n===0)sm('Saved locally','#888');
+  else if(n===1)sm('✓ Saved (1 cloud)','#1D9E75');
+  else sm('✓ Saved (Gist + Sheet)','#1D9E75');
 }
 
 // ── PIN AUTH ──
-function showLogin(){
+async function showLogin(){
   $('loading').style.display='none';
   $('ls').style.display='flex';
   $('as').style.display='none';
   pinBuf='';pinStep=0;pin1='';
+  cloudPinHash=lsG(PIN_KEY)||cloudPinHash;
+  if(!lsG(PIN_KEY)){
+    try{
+      const p=(await fetchGistPayload())||(await pullGS());
+      if(p&&p.pinHash){cloudPinHash=p.pinHash;lsS(PIN_KEY,p.pinHash);}
+    }catch(e){}
+  }
   const hasPIN=!!lsG(PIN_KEY);
   $('plabel').textContent=hasPIN?'PIN daalo':'Naya PIN banao (4 digit)';
   $('perr').textContent='';
@@ -374,8 +428,10 @@ function checkPIN(){
       updDots();
     } else {
       if(pinBuf===pin1){
-        lsS(PIN_KEY,hp(pinBuf));
+        cloudPinHash=hp(pinBuf);
+        lsS(PIN_KEY,cloudPinHash);
         $('perr').textContent='';
+        gSet();
         bootApp();
       } else {
         $('perr').textContent='PIN match nahi hua, phir try karo';
@@ -386,6 +442,7 @@ function checkPIN(){
     }
   } else {
     if(hp(pinBuf)===stored){
+      cloudPinHash=stored;
       $('perr').textContent='';
       bootApp();
     } else {
@@ -399,10 +456,27 @@ function resetPin(){
   if(!confirm('PIN aur local cache delete hoga. Gist data safe rahega.'))return;
   localStorage.removeItem(PIN_KEY);
   localStorage.removeItem(CACHE);
+  cloudPinHash='';
+  stopAutoSync();
   showLogin();
 }
 
+function stopAutoSync(){
+  if(syncTimer){clearInterval(syncTimer);syncTimer=null;}
+}
+
+function startAutoSync(){
+  stopAutoSync();
+  if(!(GH_TOK||GS_WEBAPP_URL))return;
+  syncTimer=setInterval(async()=>{
+    if(document.hidden||$('as').style.display==='none')return;
+    await gGet();
+    render();
+  },AUTO_SYNC_MS);
+}
+
 function doLock(){
+  stopAutoSync();
   $('as').style.display='none';
   showLogin();
 }
@@ -410,17 +484,19 @@ function doLock(){
 // ── BOOT ──
 async function bootApp(){
   $('ls').style.display='none';
-  $('as').style.display='';
+  $('as').style.display='block';
   $('loading').style.display='none';
   sm('Syncing…','#aaa');
   await gGet();
   render();
+  startAutoSync();
 }
 
 async function doSync(){
   sm('Syncing…','#aaa');
   await gGet();
   render();
+  startAutoSync();
 }
 
 // ── APP ──
@@ -571,13 +647,13 @@ async function mkTag(){
   const s=SW[selSW];
   tags.push({id:'u_'+Date.now(),l:nm,c:s.c,bg:s.bg,t:s.t});
   $('ntn').value='';fillSels();drawTM();
-  lsS(CACHE,{expenses:exps,tags});await gSet();
+  await gSet();
 }
 async function rmTag(id){
   tags=tags.filter(t=>t.id!==id);
   exps.forEach(e=>{if(e.tag===id)e.tag='other';});
   fillSels();drawTM();render();
-  lsS(CACHE,{expenses:exps,tags});await gSet();
+  await gSet();
 }
 
 function doCSV(){
@@ -591,6 +667,8 @@ function doCSV(){
 
 $('idesc').addEventListener('keydown',e=>{if(e.key==='Enter')$('iamt').focus();});
 $('iamt').addEventListener('keydown',e=>{if(e.key==='Enter')addE();});
+window.addEventListener('online',()=>{if($('as').style.display!=='none')doSync();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('as').style.display!=='none')doSync();});
 
 // ── INIT ──
 // Show loading briefly then go to login
