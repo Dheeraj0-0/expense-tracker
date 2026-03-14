@@ -350,24 +350,26 @@ async function pushGS(p){
 async function gGet(){
   const c=lsG(CACHE);
   if(c){applyPayload(c);}
-  let ok=false;
+  const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
   let rp=null;
   try{
     const gp=await fetchGistPayload();
-    if(gp){rp=gp;ok=true;}
+    if(gp)rp=gp;
   }catch(e){}
   try{
     const sp=await pullGS();
-    if(sp&&(!rp||new Date(sp.updatedAt||0)>new Date(rp.updatedAt||0))){rp=sp;ok=true;}
+    if(sp&&(!rp||new Date(sp.updatedAt||0)>new Date(rp.updatedAt||0)))rp=sp;
   }catch(e){}
   if(rp){applyPayload(rp);sm('✓ Synced','#1D9E75');return true;}
-  sm(ok?'✓ Synced':'Offline — cache se','#888');
+  sm(hasCloud?'Offline — cache se':'Cloud not configured — local mode','#888');
   return false;
 }
 
 async function gSet(){
   const p=payload();
   lsS(CACHE,p);
+  const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
+  if(!hasCloud){sm('Saved locally','#888');return;}
   sm('Saving…','#aaa');
   let n=0;
   try{
@@ -623,13 +625,13 @@ async function mkTag(){
   const s=SW[selSW];
   tags.push({id:'u_'+Date.now(),l:nm,c:s.c,bg:s.bg,t:s.t});
   $('ntn').value='';fillSels();drawTM();
-  lsS(CACHE,{expenses:exps,tags});await gSet();
+  await gSet();
 }
 async function rmTag(id){
   tags=tags.filter(t=>t.id!==id);
   exps.forEach(e=>{if(e.tag===id)e.tag='other';});
   fillSels();drawTM();render();
-  lsS(CACHE,{expenses:exps,tags});await gSet();
+  await gSet();
 }
 
 function doCSV(){
