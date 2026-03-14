@@ -256,10 +256,8 @@ select{
 <script>
 // ── CREDENTIALS ──
 const GIST_ID = 'ebb25ba8ddeef011f9f79d1c2cfc9e74';
-// Token ab seedha local storage se aayega
 let GH_TOK  = (localStorage.getItem('gh_token') || '').trim();
 const GF      = 'kharcha.json';
-// Google Sheets URL update kar diya gaya hai
 const GS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzSCx3MztPSXr9tV2VpffVtRkVfgdJkQdjLO0QdiAbGMHOEv2ELFkCQ-mUe22Y6dP_7cA/exec';
 const GS_SYNC_KEY   = 'kharcha123';
 const PIN_KEY = 'kharcha_pin';
@@ -331,18 +329,30 @@ async function pushGistPayload(p){
   return r.ok;
 }
 
+// Fixed CORS Issue: Changed Content-Type to text/plain
 async function pullGS(){
   if(!GS_WEBAPP_URL)return null;
-  const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'pull',key:GS_SYNC_KEY})});
-  if(!r.ok)return null;
-  const d=await r.json();
-  return d&&((d.data&&typeof d.data==='object'&&d.data)||d.payload||d);
+  try {
+    const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pull',key:GS_SYNC_KEY})});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return d&&((d.data&&typeof d.data==='object'&&d.data)||d.payload||d);
+  } catch(e) {
+    console.error("Sheet Pull Error:", e);
+    return null;
+  }
 }
 
+// Fixed CORS Issue: Changed Content-Type to text/plain
 async function pushGS(p){
   if(!GS_WEBAPP_URL)return false;
-  const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'push',key:GS_SYNC_KEY,payload:p})});
-  return r.ok;
+  try {
+    const r=await fetch(GS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'push',key:GS_SYNC_KEY,payload:p})});
+    return r.ok;
+  } catch(e) {
+    console.error("Sheet Push Error:", e);
+    return false;
+  }
 }
 
 // ── GIST API ──
