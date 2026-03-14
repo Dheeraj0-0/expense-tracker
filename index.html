@@ -259,7 +259,7 @@ select{
 <script>
 // ── HARDCODED CREDENTIALS ──
 const GIST_ID = 'ebb25ba8ddeef011f9f79d1c2cfc9e74';
-const GH_TOK  = process.env.MY_APP_TOKEN;
+const GH_TOK  = (window.MY_APP_TOKEN || '').trim();
 const GF      = 'kharcha.json';
 const PIN_KEY = 'kharcha_pin';
 const CACHE   = 'kharcha_cache';
@@ -297,6 +297,12 @@ function sm(msg,col){const e=$('smsg');e.textContent=msg;e.style.color=col||'#aa
 
 // ── GIST API ──
 async function gGet(){
+  if(!GH_TOK){
+    sm('Sync token missing — local mode','#888');
+    const c=lsG(CACHE);
+    if(c){if(c.expenses)exps=c.expenses;if(c.tags&&c.tags.length)tags=c.tags;}
+    return false;
+  }
   try{
     const r=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
       headers:{Authorization:`token ${GH_TOK}`,Accept:'application/vnd.github.v3+json'},
@@ -325,6 +331,7 @@ async function gGet(){
 
 async function gSet(){
   lsS(CACHE,{expenses:exps,tags});
+  if(!GH_TOK){sm('Saved locally','#888');return;}
   sm('Saving…','#aaa');
   try{
     const body={files:{}};
@@ -410,7 +417,7 @@ function doLock(){
 // ── BOOT ──
 async function bootApp(){
   $('ls').style.display='none';
-  $('as').style.display='';
+  $('as').style.display='block';
   $('loading').style.display='none';
   sm('Syncing…','#aaa');
   await gGet();
