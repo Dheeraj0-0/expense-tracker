@@ -153,6 +153,7 @@ select{
     </div>
     <div style="text-align:center;">
       <button class="btn-o" style="font-size:11px;padding:5px 12px;" onclick="resetPin()">PIN reset karo</button>
+      <button class="btn-o" style="font-size:11px;padding:5px 12px;margin-left:5px;" onclick="setGitHubToken()">Set Token</button>
     </div>
   </div>
 </div>
@@ -255,11 +256,12 @@ select{
 <script>
 // ── CREDENTIALS ──
 const GIST_ID = 'ebb25ba8ddeef011f9f79d1c2cfc9e74';
-// Yahan maine aapka purana token default mein daal diya hai taaki sync break na ho
-let GH_TOK = (localStorage.getItem('gh_token') || '').trim();
+// Token ab seedha local storage se aayega
+let GH_TOK  = (localStorage.getItem('gh_token') || '').trim();
 const GF      = 'kharcha.json';
-const GS_WEBAPP_URL = (window.GS_WEBAPP_URL || '').trim();
-const GS_SYNC_KEY   = (window.GS_SYNC_KEY || '').trim();
+// Google Sheets URL update kar diya gaya hai
+const GS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzSCx3MztPSXr9tV2VpffVtRkVfgdJkQdjLO0QdiAbGMHOEv2ELFkCQ-mUe22Y6dP_7cA/exec';
+const GS_SYNC_KEY   = 'kharcha123';
 const PIN_KEY = 'kharcha_pin';
 const CACHE   = 'kharcha_cache';
 
@@ -466,6 +468,17 @@ function resetPin(){
   localStorage.removeItem(CACHE);
   cloudPinHash='';
   showLogin();
+}
+
+function setGitHubToken() {
+  const currentToken = localStorage.getItem('gh_token') || '';
+  const token = prompt("Apna GitHub Personal Access Token yahan paste karein:", currentToken);
+  
+  if (token !== null && token.trim() !== "") {
+    localStorage.setItem('gh_token', token.trim());
+    GH_TOK = token.trim();
+    alert("Token securely save ho gaya hai! Ab sync chalega.");
+  }
 }
 
 function doLock(){
