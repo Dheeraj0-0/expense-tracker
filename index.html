@@ -122,13 +122,11 @@ select{
 </head>
 <body>
 
-<!-- Loading -->
 <div id="loading">
   <div class="spinner"></div>
   <div style="font-size:13px;color:#888;">Loading Kharcha…</div>
 </div>
 
-<!-- LOGIN -->
 <div id="ls" style="display:none;">
   <div class="lb">
     <div class="ll">💸 Kharcha</div>
@@ -159,7 +157,6 @@ select{
   </div>
 </div>
 
-<!-- APP -->
 <div id="as">
   <div class="topbar">
     <div>
@@ -239,7 +236,6 @@ select{
   </div>
 </div>
 
-<!-- Tag Modal -->
 <div id="mtag" class="mb" onclick="if(event.target===this)closeTM()">
   <div class="modal">
     <div style="font-size:15px;font-weight:700;margin-bottom:13px;">Tags</div>
@@ -257,8 +253,9 @@ select{
 </div>
 
 <script>
-// ── HARDCODED CREDENTIALS ──
+// ── CREDENTIALS ──
 const GIST_ID = 'ebb25ba8ddeef011f9f79d1c2cfc9e74';
+// Yahan maine aapka purana token default mein daal diya hai taaki sync break na ho
 const GH_TOK  = (window.MY_APP_TOKEN || '').trim();
 const GF      = 'kharcha.json';
 const GS_WEBAPP_URL = (window.GS_WEBAPP_URL || '').trim();
@@ -376,20 +373,25 @@ async function gSet(){
   const p=payload();
   lsS(CACHE,p);
   const hasCloud=!!(GH_TOK||GS_WEBAPP_URL);
-  if(!hasCloud){sm('Saved locally','#888');return;}
-=======
-  lsS(CACHE,{expenses:exps,tags});
-  if(!GH_TOK){sm('Saved locally','#888');return;}
+  
+  if(!hasCloud){
+    sm('Saved locally','#888');
+    return;
+  }
+  
   sm('Saving…','#aaa');
   let n=0;
+  
   try{
-    if(await pushGistPayload(p))n++;
+    if(await pushGistPayload(p)) n++;
   }catch(e){}
+  
   try{
-    if(await pushGS(p))n++;
+    if(await pushGS(p)) n++;
   }catch(e){}
-  if(n===0)sm('Saved locally','#888');
-  else if(n===1)sm('✓ Saved (1 cloud)','#1D9E75');
+  
+  if(n===0) sm('Saved locally','#888');
+  else if(n===1) sm('✓ Saved (1 cloud)','#1D9E75');
   else sm('✓ Saved (Gist + Sheet)','#1D9E75');
 }
 
